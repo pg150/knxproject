@@ -2,9 +2,10 @@ var knx = require ('knx')
 
 var knx = require ('knx')
 
-/*var connection = new knx.Connection( {
+var connection = new knx.Connection( {
   // ip address and port of the KNX router or interface
-  ipAddr: '192.168.0.5', ipPort: 3671,
+  ipAddr: '192.168.1.10', 
+  ipPort: 3671,
 
   handlers: {
     connected: function() {
@@ -26,7 +27,7 @@ var knx = require ('knx')
       console.log("**** ERROR: %j", connstatus);
     }
   }
-});*/
+});
 
 var nb=1;
 function chenillard(connection,sens){
@@ -172,23 +173,29 @@ app.listen(3030, () => console.log('App listening on port 3030!'));
 
 app.post('/start', (req, res) => {
   console.log('Mise en marche du chenillard');
-  //clearInterval(chenil);
-  //chenil = setInterval(function() {chenillard(connection, sens)}, temps)
+  clearInterval(chenil);
+  chenil = setInterval(function() {chenillard(connection, sens)}, temps)
 })
 
 app.post('/stop', (req, res) => {
   console.log('Arret du chenillard');
-  //clearInterval(chenil);
- /*     connection.write("0/1/1", 0);
+  clearInterval(chenil);
+       connection.write("0/1/1", 0);
         connection.write("0/1/2", 0);
         connection.write("0/1/3", 0);
         connection.write("0/1/4", 0);
-  }*/
 })
 
 app.post('/inverse', (req, res) => {
   console.log('inverse le sens du chenillard');
   sens = !sens
+  clearInterval(chenil);
+  chenil = setInterval(function() {chenillard(connection, sens)}, temps)
+})
+
+app.post('/vitesse', (req, res) => {
+  console.log('changement vitesse chenillard');
   //clearInterval(chenil);
-  //chenil = setInterval(function() {chenillard(connection, sens)}, temps)
+ /*
+  }*/
 })
