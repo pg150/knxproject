@@ -22,7 +22,7 @@
           :width="2"
           step="500"
         ></v-slider>
-        <v-flex>
+        <v-flex xs3>
         <v-btn 
         round 
         :color="color" 
@@ -116,13 +116,22 @@ export default {
 
     vitesse_changement: function() {
       if(this.boolean_marche == true){
+        console.log(this.vitesse)
         axios({
           method: "POST",
           url: "http://localhost:3030/vitesse",
-          //data: this.vitesse,
+          data: this.vitesse,
         });
       }
     },
+
+  },
+
+  retouretat() {
+    this.$options.sockets.onmessage = (msg) => {
+      let etat = JSON.parse(msg.data)
+      console.log(etat)
+    }
 
 
   }

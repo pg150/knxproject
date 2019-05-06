@@ -6,10 +6,15 @@ import router from './router'
 import Vuetify from 'vuetify'
 import 'vuetify/src/stylus/app.styl'
 import 'vuetify/dist/vuetify.min.css'
+import VueWebsocket from "vue-websocket";
 
 Vue.config.productionTip = false
 
 Vue.use(Vuetify)
+
+Vue.use(VueWebsocket, "ws://otherserver:1234", {
+    reconnection: false
+});
 
 /* eslint-disable no-new */
 new Vue({
