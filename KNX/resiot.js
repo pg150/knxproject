@@ -1,53 +1,16 @@
-var knx = require ('knx')
+var knx = require('knx')
 
-var knx = require ('knx')
-/*
-var connection = new knx.Connection( {
-  // ip address and port of the KNX router or interface
-  ipAddr: '192.168.1.10', 
-  ipPort: 3671,
-
-  handlers: {
-    connected: function() {
-      console.log('On est connecté');
-    },
-    // get notified for all KNX events:
-    event: function(evt, src, dest, value) { console.log(
-        "event: %s, src: %j, dest: %j, value: %j",
-        evt, src, dest, value
-      );
-      var json = JSON.stringify(value);
-      var bin = JSON.parse(json).data[0];
-      //console.log(bin);
-      controlchenillard(connection, dest, bin);
-      if (WSconnection.connected) {
-          var json = {dest : dest, state : state}
-         WSconnection.sendUTF(JSON.stringify(json));
-       }
-
-    },
-    // get notified on connection errors
-    error: function(connstatus) {
-      console.log("**** ERROR: %j", connstatus);
-    }
-  }
-});
-*/
-
-process.on('SIGINT',function(){
-  connection.Disconnect()
-  console.log('Disconnected')
-  process.exit();
-})
+var knx = require('knx')
+let connection;
 
 
-var nb=1;
+var nb = 1;
 var temps = 1000;
 var chenil;
 var sens;
 
-function chenillard(connection,sens){
-  if(sens){
+function chenillard(connection, sens) {
+  if (sens) {
     console.log("chenillard")
     switch (nb) {
       case 1:
@@ -77,7 +40,7 @@ function chenillard(connection,sens){
         break;
 
     }
-    nb+=1
+    nb += 1
   }
   else {
     console.log("chenillard inv ")
@@ -88,7 +51,7 @@ function chenillard(connection,sens){
         connection.write("0/1/2", 0);
         connection.write("0/1/3", 0);
         connection.write("0/1/4", 1);
-          break;
+        break;
       case 2:
         connection.write("0/1/1", 0);
         connection.write("0/1/2", 0);
@@ -110,102 +73,156 @@ function chenillard(connection,sens){
         break;
 
     }
-    nb+=1
+    nb += 1
   }
 
 }
 
 
-function controlchenillard(connection, dest, bin){
-  if (dest == "0/3/1"){
+function controlchenillard(connection, dest, bin) {
+  if (dest == "0/3/1") {
     clearInterval(chenil);
-    if(bin == 0){
+    if (bin == 0) {
       sens = true;
-      chenil = setInterval(function() {chenillard(connection, sens)}, temps);
+      chenil = setInterval(function () { chenillard(connection, sens) }, temps);
     }
-    else{
+    else {
       sens = false;
-      chenil = setInterval(function() {chenillard(connection, sens)}, temps);
+      chenil = setInterval(function () { chenillard(connection, sens) }, temps);
     }
   }
-  if(dest == "0/3/2"){
+  if (dest == "0/3/2") {
     temps += 500;
     clearInterval(chenil);
-    chenil = setInterval(function() {chenillard(connection, sens)}, temps);
+    chenil = setInterval(function () { chenillard(connection, sens) }, temps);
   }
-  if(dest == "0/3/3"){
-    if((temps - 500) >= 500 ){
+  if (dest == "0/3/3") {
+    if ((temps - 500) >= 500) {
       temps -= 500;
       clearInterval(chenil);
-      chenil = setInterval(function() {chenillard(connection, sens)}, temps);
+      chenil = setInterval(function () { chenillard(connection, sens) }, temps);
     }
-    else{
+    else {
       console.log("delai de temps trop court");
       clearInterval(chenil);
-      chenil = setInterval(function() {chenillard(connection, sens)}, temps);
+      chenil = setInterval(function () { chenillard(connection, sens) }, temps);
     }
   }
-  if (dest == "0/3/4"){
-    if(bin == 0){
+  if (dest == "0/3/4") {
+    if (bin == 0) {
       clearInterval(chenil);
       connection.write("0/1/1", 0);
       connection.write("0/1/2", 0);
       connection.write("0/1/3", 0);
       connection.write("0/1/4", 0);
     }
-    else{
+    else {
       clearInterval(chenil);
-      chenil = setInterval(function() {chenillard(connection, sens)}, temps);
+      chenil = setInterval(function () { chenillard(connection, sens) }, temps);
     }
   }
 }
 
 
 
-
 var express = require('express'),
-fs = require('fs'),
-bodyParser=require('body-parser')
+  fs = require('fs'),
+  bodyParser = require('body-parser')
 app = express(),
-port= parseInt(process.env.PORT,10) || 8080
-app.use(function(req, res, next) { 
-  res.header('Access-Control-Allow-Origin', "*"); 
-  res.header('Access-Control-Allow-Methods','POST'); 
-  res.header('Access-Control-Allow-Headers', 'Content-Type'); 
-  next(); 
+  port = parseInt(process.env.PORT, 10) || 8080
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', "*");
+  res.header('Access-Control-Allow-Methods', 'POST');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next();
 })
-app.use(bodyParser.urlencoded({extended:false}))
+app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 
 app.get('/', (req, res) => {
-    res.send('Bienvenue sur notre projet KNX');
+  res.send('Bienvenue sur notre projet KNX');
 });
 
 app.listen(3030, () => console.log('App listening on port 3030!'));
 
+app.post('/connection', (req, res) => {
+  console.log('connection à la maquette');
+  var keys = Object.keys(req.body);
+  var numero = keys[0].toString();
+  console.log(numero)
+/*
+  connection = new knx.Connection({
+    // ip address and port of the KNX router or interface
+    ipAddr: '192.168.1.' + numero,
+    ipPort: 3671,
+
+    handlers: {
+      connected: function () {
+        console.log('On est connecté');
+      },
+      // get notified for all KNX events:
+      event: function (evt, src, dest, value) {
+        console.log(
+          "event: %s, src: %j, dest: %j, value: %j",
+          evt, src, dest, value
+        );
+
+        var jsonvalue = JSON.stringify(value);
+        var bin = JSON.parse(jsonvalue).data[0];
+        //console.log(bin);
+        var json = {dest : dest, state : bin}
+        WSconnection.sendUTF(JSON.stringify(json));
+        controlchenillard(connection, dest, bin);
+
+      },
+      // get notified on connection errors
+      error: function (connstatus) {
+        console.log("**** ERROR: %j", connstatus);
+      }
+    }
+  });
+*/
+})
+
+
+app.post('/deconnection', (req, res) => {
+  /*connection.write("0/1/1", 0);
+  connection.write("0/1/2", 0);
+  connection.write("0/1/3", 0);
+  connection.write("0/1/4", 0);
+  process.on('SIGINT', function () {
+    this.connection.Disconnect()
+    console.log('Disconnected')
+    process.exit();
+  })*/
+})
+
+
 app.post('/start', (req, res) => {
   console.log('Mise en marche du chenillard');
-    var json = {dest : "0/1/3", state : "1"}
-   WSconnection.sendUTF(JSON.stringify(json));
+  var json = {dest : "0/3/3", state : 1}
+  WSconnection.sendUTF(JSON.stringify(json));
+  var json = {dest : "0/3/1", state : 0}
+  WSconnection.sendUTF(JSON.stringify(json));
   //clearInterval(chenil);
-  //chenil = setInterval(function() {chenillard(connection, sens)}, temps)
+  //chenil = setInterval(function () { chenillard(connection, sens) }, temps)
 })
 
 app.post('/stop', (req, res) => {
   console.log('Arret du chenillard');
-  /*clearInterval(chenil);
-        connection.write("0/1/1", 0);
-        connection.write("0/1/2", 0);
-        connection.write("0/1/3", 0);
-        connection.write("0/1/4", 0);*/
+  clearInterval(chenil);
+  /*connection.write("0/1/1", 0);
+  connection.write("0/1/2", 0);
+  connection.write("0/1/3", 0);
+  connection.write("0/1/4", 0);*/
 })
 
 app.post('/inverse', (req, res) => {
   console.log('inverse le sens du chenillard');
   sens = !sens
   //clearInterval(chenil);
-  //chenil = setInterval(function() {chenillard(connection, sens)}, temps)
+  //chenil = setInterval(function () { chenillard(connection, sens) }, temps)
 })
 
 app.post('/vitesse', (req, res) => {
@@ -213,10 +230,10 @@ app.post('/vitesse', (req, res) => {
   var keys = Object.keys(req.body);
   var vitesse = keys[0]
   console.log(vitesse)
-  //temps = this.vitesse
+  temps = this.vitesse
   //clearInterval(chenil);
-  //chenil = setInterval(function() {chenillard(connection, sens)}, temps)
-  
+  //chenil = setInterval(function () { chenillard(connection, sens) }, temps)
+
 })
 
 
@@ -239,6 +256,7 @@ let wsServer = new WebSocketServer({
   httpServer: server
 });
 
+
 // WebSocket server
 wsServer.on('request', request => {
   WSconnection = request.accept(null, request.origin);
@@ -253,4 +271,3 @@ wsServer.on('request', request => {
   WSconnection.on('close', connection => {
   });
 });
-
