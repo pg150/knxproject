@@ -11,7 +11,6 @@ var sens;
 
 function chenillard(connection, sens) {
   if (sens) {
-    console.log("chenillard")
     switch (nb) {
       case 1:
         connection.write("0/1/1", 1);
@@ -43,8 +42,6 @@ function chenillard(connection, sens) {
     nb += 1
   }
   else {
-    console.log("chenillard inv ")
-    console.log(nb)
     switch (nb) {
       case 1:
         connection.write("0/1/1", 0);
@@ -151,7 +148,7 @@ app.post('/connection', (req, res) => {
   var keys = Object.keys(req.body);
   var numero = keys[0].toString();
   console.log(numero)
-/*
+
   connection = new knx.Connection({
     // ip address and port of the KNX router or interface
     ipAddr: '192.168.1.' + numero,
@@ -182,12 +179,12 @@ app.post('/connection', (req, res) => {
       }
     }
   });
-*/
+
 })
 
 
 app.post('/deconnection', (req, res) => {
-  /*connection.write("0/1/1", 0);
+  connection.write("0/1/1", 0);
   connection.write("0/1/2", 0);
   connection.write("0/1/3", 0);
   connection.write("0/1/4", 0);
@@ -195,34 +192,30 @@ app.post('/deconnection', (req, res) => {
     this.connection.Disconnect()
     console.log('Disconnected')
     process.exit();
-  })*/
+  })
 })
 
 
 app.post('/start', (req, res) => {
   console.log('Mise en marche du chenillard');
-  var json = {dest : "0/3/3", state : 1}
-  WSconnection.sendUTF(JSON.stringify(json));
-  var json = {dest : "0/3/1", state : 0}
-  WSconnection.sendUTF(JSON.stringify(json));
-  //clearInterval(chenil);
-  //chenil = setInterval(function () { chenillard(connection, sens) }, temps)
+  clearInterval(chenil);
+  chenil = setInterval(function () { chenillard(connection, sens) }, temps)
 })
 
 app.post('/stop', (req, res) => {
   console.log('Arret du chenillard');
   clearInterval(chenil);
-  /*connection.write("0/1/1", 0);
+  connection.write("0/1/1", 0);
   connection.write("0/1/2", 0);
   connection.write("0/1/3", 0);
-  connection.write("0/1/4", 0);*/
+  connection.write("0/1/4", 0);
 })
 
 app.post('/inverse', (req, res) => {
   console.log('inverse le sens du chenillard');
   sens = !sens
-  //clearInterval(chenil);
-  //chenil = setInterval(function () { chenillard(connection, sens) }, temps)
+  clearInterval(chenil);
+  chenil = setInterval(function () { chenillard(connection, sens) }, temps)
 })
 
 app.post('/vitesse', (req, res) => {
@@ -231,8 +224,8 @@ app.post('/vitesse', (req, res) => {
   var vitesse = keys[0]
   console.log(vitesse)
   temps = this.vitesse
-  //clearInterval(chenil);
-  //chenil = setInterval(function () { chenillard(connection, sens) }, temps)
+  clearInterval(chenil);
+  chenil = setInterval(function () { chenillard(connection, sens) }, temps)
 
 })
 

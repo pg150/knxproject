@@ -31,7 +31,7 @@
     <v-spacer></v-spacer>
     <v-layout text-xs-center wrap className="led-box">
       <v-flex xs3 >
-        <div class="led-on" id="led1"></div>
+        <div class="led-off" id="led1"></div>
         <p>LED 1</p>
       </v-flex>
       <v-flex xs3 >
@@ -116,36 +116,32 @@ export default {
       let etat = JSON.parse(msg.data);
       console.log(etat.dest)
       switch (etat.dest) {
-        case "0/3/1":
-          console.log("ca marche pour 0/3/1");
-          if(etat.state == 1){
+        case "0/2/1":
+          if(etat.state){
             document.getElementById('led1').className="led-on"
           }
           else{
             document.getElementById('led1').className="led-off"
           }
           break;
-        case "0/3/2":
-          console.log("ca marche pour 0/3/2");
-          if(etat.state == 1){
+        case "0/2/2":
+          if(etat.state){
             document.getElementById('led2').className="led-on"
           }
           else{
             document.getElementById('led2').className="led-off"
           }
           break;
-        case "0/3/3":
-          console.log("ca marche pour 0/3/3");
-          if(etat.state == 1){
+        case "0/2/3":
+          if(etat.state){
             document.getElementById('led3').className="led-on"
           }
           else{
             document.getElementById('led3').className="led-off"
           }
           break;
-        case "0/3/4":
-          console.log("ca marche pour 0/3/4");
-          if(etat.state == 1){
+        case "0/2/4":
+          if(etat.state){
             document.getElementById('led4').className="led-on"
           }
           else{
@@ -172,10 +168,10 @@ export default {
   margin: 20px auto; /*marge au-dessus*/
   width: 75px;
   height: 75px;
-  background-color: #f3ef14;
+  background-color: #43da1e;
   border-radius: 50%;
-  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #441313 0 -1px 9px,
-    rgba(255, 0, 0, 0.5) 0 2px 12px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #134426 0 -1px 9px,
+    rgba(0, 0, 0, 0.5) 0 2px 12px;
 }
 
 .led-off {
@@ -184,7 +180,7 @@ export default {
   height: 75px;
   background-color: #776d6d;
   border-radius: 50%;
-  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #743e06 0 -1px 9px,
-    rgba(0, 0, 0, 0) 0 2px 12px;
+  box-shadow: rgba(2, 146, 32, 0.2) 0 -1px 7px 1px, inset 0 -1px 9px,
+    rgba(2, 146, 32, 0) 0 2px 12px;
 }
 </style>
