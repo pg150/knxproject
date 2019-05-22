@@ -8,8 +8,6 @@ import 'vuetify/src/stylus/app.styl'
 import 'vuetify/dist/vuetify.min.css'
 import VueWebsocket from "vue-native-websocket";
 
-Vue.config.productionTip = false
-
 Vue.use(Vuetify)
 
 Vue.use(VueWebsocket, "ws://localhost:1234", {format: 'json'});
